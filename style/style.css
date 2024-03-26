@@ -9,3 +9,20 @@
     width: 100vw;
     height: 100vh;
 }
+
+.mapbox-directions-origin,
+.mapbox-directions-destination {
+    display: none;
+}
+
+.mapbox-directions-component-keyline {
+    display: none;
+}
+
+.mapboxgl-ctrl-bottom-left {
+    display: none;
+}
+
+.mapboxgl-ctrl-bottom-right {
+    display: none;
+}
