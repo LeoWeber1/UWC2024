@@ -35,20 +35,18 @@ map.addControl(new mapboxgl.FullscreenControl());
 
 map.addControl(new MapboxDirections({accessToken: mapboxgl.accessToken,     interactive: false, unit: 'metric'}), 'top-left');
 
-function fetchData(url) {
-    return fetch(url)
-        .then(response => response.json())
-        .then(data => data.items);
-}
 
-fetchData('https://apex.oracle.com/pls/apex/test_enviro/localservice/get')
-    .then(items => {
-        items.forEach(item => {
-            const { lat, longi: lng, code: label, val1: temp, val2: humidity } = item;
-            const marker = new mapboxgl.Marker()
-                .setLngLat([parseFloat(lng), parseFloat(lat)])
-                .addTo(map);
-            console.log(item)
+fetch('positions.csv')
+    .then(response => response.text())
+    .then(data => {
+        const lines = data.split('\n'); // split the CSV file into lines
+        lines.forEach(line => {
+            const [lat, lng, label, temp, humidity] = line.split(','); // split each line into latitude, longitude, label, temperature, and humidity
+            const marker = new mapboxgl.Marker() // create a new marker
+                .setLngLat([parseFloat(lng), parseFloat(lat)]) // set the longitude and latitude
+                .addTo(map); // add the marker to the map
+
+            // Check if there's a locally stored label for this marker
             const storedLabel = localStorage.getItem(`label_${lat}_${lng}`);
             const popupLabel = storedLabel ? storedLabel : label;
 
@@ -59,12 +57,14 @@ fetchData('https://apex.oracle.com/pls/apex/test_enviro/localservice/get')
             `);
             marker.setPopup(popup);
 
+            // Add an event listener to the popup
             popup.on('open', () => {
                 const popupElement = document.getElementById(`popup_${lat}_${lng}`);
                 let clickCount = 0;
                 popupElement.addEventListener('click', () => {
                     clickCount++;
                     if (clickCount === 2) {
+                        // Create a custom modal
                         const modal = document.createElement('div');
                         modal.innerHTML = `
                             <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); display: flex; justify-content: center; align-items: center;">
@@ -77,6 +77,7 @@ fetchData('https://apex.oracle.com/pls/apex/test_enviro/localservice/get')
                         `;
                         document.body.appendChild(modal);
 
+                        // When the OK button is clicked, update the label and remove the modal
                         document.getElementById('submit').addEventListener('click', () => {
                             const newLabel = document.getElementById('newLabel').value;
                             if (newLabel) {
