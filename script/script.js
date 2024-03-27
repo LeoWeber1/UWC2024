@@ -8,8 +8,8 @@ var lastZoom = parseFloat(localStorage.getItem('lastZoom')) || 9;
 var map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/satellite-streets-v12',
-    center: [lastLng, lastLat], // Set the initial position to the last position
-    zoom: lastZoom // Set the initial zoom level to the last zoom level
+    center: [lastLng, lastLat], // Set the initial position 
+    zoom: lastZoom // Set the initial zoom level 
 });
 
 // Add a moveend event listener to the map
